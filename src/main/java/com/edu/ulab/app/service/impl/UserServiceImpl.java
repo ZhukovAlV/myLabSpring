@@ -3,9 +3,11 @@ package com.edu.ulab.app.service.impl;
 import com.edu.ulab.app.dto.UserDto;
 import com.edu.ulab.app.entity.User;
 import com.edu.ulab.app.exception.NotFoundException;
+import com.edu.ulab.app.exception.ValidationException;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
+import com.edu.ulab.app.validation.UserValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +28,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        User user = userMapper.userDtoToUser(userDto);
-        log.info("Mapped user: {}", user);
+        if (UserValidator.isValidUser(userDto)){
+            User user = userMapper.userDtoToUser(userDto);
+            log.info("Mapped user: {}", user);
 
-        User savedUser = userRepository.save(user);
-        log.info("Saved user: {}", savedUser);
+            User savedUser = userRepository.save(user);
+            log.info("Saved user: {}", savedUser);
 
-        return userMapper.userToUserDto(savedUser);
+            return userMapper.userToUserDto(savedUser);
+        } else throw new ValidationException("Not validation data: " + userDto);
     }
-
 
     @Override
     public void updateUser(UserDto userDto) {
-        User user = userMapper.userDtoToUser(userDto);
-        log.info("Mapped user: {}", user);
+        if (UserValidator.isValidUser(userDto)){
+            User user = userMapper.userDtoToUser(userDto);
+            log.info("Mapped user: {}", user);
 
-        User savedUser = userRepository.save(user);
-        log.info("Update user: {}", savedUser);
+            User savedUser = userRepository.save(user);
+            log.info("Update user: {}", savedUser);
+        } else throw new ValidationException("Not validation data: " + userDto);
     }
 
     @Override

@@ -3,12 +3,13 @@ package com.edu.ulab.app.service.impl;
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.entity.Book;
 import com.edu.ulab.app.entity.User;
-import com.edu.ulab.app.exception.DAOException;
 import com.edu.ulab.app.exception.NotFoundException;
+import com.edu.ulab.app.exception.ValidationException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.repository.BookRepository;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.BookService;
+import com.edu.ulab.app.validation.BookValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,22 +36,26 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        Book book = bookMapper.bookDtoToBook(bookDto);
-        log.info("Mapped book: {}", book);
+        if (BookValidator.isValidBook(bookDto)){
+            Book book = bookMapper.bookDtoToBook(bookDto);
+            log.info("Mapped book: {}", book);
 
-        Book savedBook = bookRepository.save(book);
-        log.info("Saved book: {}", savedBook);
+            Book savedBook = bookRepository.save(book);
+            log.info("Saved book: {}", savedBook);
 
-        return bookMapper.bookToBookDto(savedBook);
+            return bookMapper.bookToBookDto(savedBook);
+        } else throw new ValidationException("Not validation data: " + bookDto);
     }
 
     @Override
     public void updateBook(BookDto bookDto) {
-        Book book = bookMapper.bookDtoToBook(bookDto);
-        log.info("Mapped book: {}", book);
+        if (BookValidator.isValidBook(bookDto)){
+            Book book = bookMapper.bookDtoToBook(bookDto);
+            log.info("Mapped book: {}", book);
 
-        Book savedBook = bookRepository.save(book);
-        log.info("Saved book: {}", savedBook);
+            Book savedBook = bookRepository.save(book);
+            log.info("Saved book: {}", savedBook);
+        } else throw new ValidationException("Not validation data: " + bookDto);
     }
 
     @Override
