@@ -45,30 +45,32 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateBook(BookDto bookDto) {
+    public void updateBook(BookDto bookDto) {
         Book book = bookMapper.bookDtoToBook(bookDto);
         log.info("Mapped book: {}", book);
 
         Book savedBook = bookRepository.save(book);
         log.info("Saved book: {}", savedBook);
-
-        return bookMapper.bookToBookDto(savedBook);
     }
 
     @Override
     public BookDto getBookById(Long id) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
-        if (bookOpt.isPresent()) return bookMapper.bookToBookDto(bookOpt.get());
-        else throw new NotFoundException("Book with ID: " + id + " not found");
+        if (bookOpt.isPresent()) {
+            log.info("Got book: {}", bookOpt.get());
+            return bookMapper.bookToBookDto(bookOpt.get());
+        } else throw new NotFoundException("Book with ID: " + id + " not found");
     }
 
     @Override
     public List<Book> getBooksByUserId(Long userId) {
         Optional<User> userOpt = userRepository.findById(userId);
 
-        if (userOpt.isPresent()) return userOpt.get().getBookList();
-        else throw new NotFoundException("User with ID: " + userId + " not found");
+        if (userOpt.isPresent()) {
+            log.info("Got user: {}", userOpt.get());
+            return userOpt.get().getBookList();
+        } else throw new NotFoundException("User with ID: " + userId + " not found");
     }
 
     @Override
@@ -76,8 +78,8 @@ public class BookServiceImpl implements BookService {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
         if (bookOpt.isPresent()) {
-            log.info("Book for remove: {}", bookOpt.get());
             bookRepository.delete(bookOpt.get());
+            log.info("Book remove: {}", bookOpt.get());
         } else throw new NotFoundException("Book with ID: " + id + " not found");
     }
 

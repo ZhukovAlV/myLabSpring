@@ -63,21 +63,28 @@ public class UserDataFacade {
     }
 
     public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest) {
+        UserDto userForUpdate = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
+        log.info("Got update for user: {}", userForUpdate);
+
         // Поиск пользователя осуществляется по fullName
-        UserDto updateUser = userService.getUserByFullName(userMapper.userRequestToUserDto(userBookRequest.getUserRequest()));
-        log.info("User for update: {}", updateUser);
+        UserDto userFromDao = userService.getUserByFullName(userForUpdate);
+        log.info("Got user for update: {}", userForUpdate);
 
         // Удаляем у пользователя книги из базы
-        log.info("Delete book for user: {}", updateUser);
-        bookService.getBooksByUserId(updateUser.getId()).forEach(bookService::deleteBook);
+        log.info("Delete book for user: {}", userFromDao);
+        bookService.getBooksByUserId(userFromDao.getId()).forEach(bookService::deleteBook);
+
+        userForUpdate.setId(userFromDao.getId());
+        userService.updateUser(userForUpdate);
+        log.info("User is update: {}", userForUpdate);
 
         // Заполняем пользователю новые книги
-        log.info("Add updates book to user: {}", updateUser);
+        log.info("Add new book to user: {}", userFromDao);
         List<Long> bookIdList = userBookRequest.getBookRequests()
                 .stream()
                 .filter(Objects::nonNull)
                 .map(bookMapper::bookRequestToBookDto)
-                .peek(bookDto -> bookDto.setUserId(updateUser.getId()))
+                .peek(bookDto -> bookDto.setUserId(userFromDao.getId()))
                 .peek(mappedBookDto -> log.info("mapped book: {}", mappedBookDto))
                 .map(bookService::createBook)
                 .peek(createdBook -> log.info("Created book: {}", createdBook))
@@ -86,30 +93,31 @@ public class UserDataFacade {
         log.info("Collected book ids: {}", bookIdList);
 
         return UserBookResponse.builder()
-                .userId(updateUser.getId())
+                .userId(userFromDao.getId())
                 .booksIdList(bookIdList)
                 .build();
     }
 
     public UserBookResponse getUserWithBooks(Long userId) {
-        log.info("Производится запрос на получение пользователя с ID: {}", userId);
+        log.info("Get User by ID: {}", userId);
         UserDto userDto = userService.getUserById(userId);
+        log.info("Got User: {}", userDto);
 
-        log.info("Производится запрос на список книг пользователя с ID: {}", userId);
-        List<Book> listBook = bookService.getBooksByUserId(userId)
+        log.info("Get Books User with ID: {}", userId);
+        List<Long> listBook = bookService.getBooksByUserId(userId)
                 .stream()
                 .filter(Objects::nonNull)
+                .map(Book::getId)
                 .toList();
 
         return UserBookResponse.builder().
                 userId(userDto.getId()).
-                booksIdList(listBook.stream().map(Book::getId).toList()).
+                booksIdList(listBook).
                 build();
     }
 
     public void deleteUserWithBooks(Long userId) {
         log.info("Будет удален пользователь с ID: {}", userId);
-        bookService.getBooksByUserId(userId).forEach(bookService::deleteBook);
         userService.deleteUserById(userId);
     }
 }

@@ -24,6 +24,6 @@ public class User {
     private String title;
     private int age;
 
-    @OneToMany(mappedBy="userId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="userId", cascade = CascadeType.REMOVE)
     private List<Book> bookList;
 }
