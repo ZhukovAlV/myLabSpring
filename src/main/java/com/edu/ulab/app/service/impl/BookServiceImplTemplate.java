@@ -1,8 +1,10 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.entity.Book;
 import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -59,7 +62,17 @@ public class BookServiceImplTemplate implements BookService {
     }
 
     @Override
+    public List<Book> getBooksByUserId(Long userId) {
+        return null;
+    }
+
+    @Override
     public void deleteBookById(Long id) {
         // реализовать недстающие методы
+    }
+
+    @Override
+    public void deleteBook(Book book) {
+
     }
 }
