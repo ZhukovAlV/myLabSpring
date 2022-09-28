@@ -1,22 +1,29 @@
 package com.edu.ulab.app.entity;
 
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
+
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+@Table(name = "person")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    private String fullName;
     private String title;
-    private String author;
-    private long pageCount;
+    private int age;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="userId", cascade = CascadeType.REMOVE)
+    private List<Book> bookList;
 }
