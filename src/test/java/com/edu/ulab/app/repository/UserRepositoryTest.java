@@ -1,7 +1,7 @@
 package com.edu.ulab.app.repository;
 
 import com.edu.ulab.app.config.SystemJpaTest;
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.User;
 import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,15 +33,15 @@ public class UserRepositoryTest {
             "classpath:sql/2_insert_person_data.sql",
             "classpath:sql/3_insert_book_data.sql"
     })
-    void insertPerson_thenAssertDmlCount() {
+    void insertUser_thenAssertDmlCount() {
         //Given
-        Person person = new Person();
-        person.setAge(111);
-        person.setTitle("reader");
-        person.setFullName("Test Test");
+        User user = new User();
+        user.setAge(111);
+        user.setTitle("reader");
+        user.setFullName("Test Test");
 
         //When
-        Person result = userRepository.save(person);
+        User result = userRepository.save(user);
 
         //Then
         assertThat(result.getAge()).isEqualTo(111);

@@ -2,17 +2,15 @@ package com.edu.ulab.app.service;
 
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.entity.Book;
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.User;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.repository.BookRepository;
 import com.edu.ulab.app.service.impl.BookServiceImpl;
-import com.edu.ulab.app.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -39,8 +37,8 @@ public class BookServiceImplTest {
     @DisplayName("Создание книги. Должно пройти успешно.")
     void saveBook_Test() {
         //given
-        Person person  = new Person();
-        person.setId(1);
+        User user  = new User();
+        user.setId(1L);
 
         BookDto bookDto = new BookDto();
         bookDto.setUserId(1L);
@@ -59,14 +57,14 @@ public class BookServiceImplTest {
         book.setPageCount(1000);
         book.setTitle("test title");
         book.setAuthor("test author");
-        book.setPerson(person);
+        book.setUserId(user.getId());
 
         Book savedBook = new Book();
-        savedBook.setId(1);
+        savedBook.setId(1L);
         savedBook.setPageCount(1000);
         savedBook.setTitle("test title");
         savedBook.setAuthor("test author");
-        savedBook.setPerson(person);
+        savedBook.setUserId(user.getId());
 
         //when
 

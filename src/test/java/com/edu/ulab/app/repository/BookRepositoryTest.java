@@ -2,13 +2,12 @@ package com.edu.ulab.app.repository;
 
 import com.edu.ulab.app.config.SystemJpaTest;
 import com.edu.ulab.app.entity.Book;
-import com.edu.ulab.app.entity.Person;
+import com.edu.ulab.app.entity.User;
 import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -40,18 +39,18 @@ public class BookRepositoryTest {
     void findAllBadges_thenAssertDmlCount() {
         //Given
 
-        Person person = new Person();
-        person.setAge(111);
-        person.setTitle("reader");
-        person.setFullName("Test Test");
+        User user = new User();
+        user.setAge(111);
+        user.setTitle("reader");
+        user.setFullName("Test Test");
 
-        Person savedPerson = userRepository.save(person);
+        User savedPerson = userRepository.save(user);
 
         Book book = new Book();
         book.setAuthor("Test Author");
         book.setTitle("test");
         book.setPageCount(1000);
-        book.setPerson(savedPerson);
+        book.setUserId(savedPerson.getId());
 
         //When
         Book result = bookRepository.save(book);
