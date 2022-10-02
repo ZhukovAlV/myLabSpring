@@ -50,7 +50,7 @@ public class UserServiceImplTemplate implements UserService {
     }
 
     @Override
-    public void updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         if (UserValidator.isValidUser(userDto)){
             User user = userMapper.userDtoToUser(userDto);
             log.info("User to update: {}", user);
@@ -58,6 +58,8 @@ public class UserServiceImplTemplate implements UserService {
             final String UPDATE_SQL = "UPDATE PERSON SET FULL_NAME=?, TITLE=?, AGE=? WHERE ID=?";
             jdbcTemplate.update(UPDATE_SQL,
                     user.getFullName(), user.getTitle(), user.getAge(), user.getId());
+
+            return userDto;
         } else throw new ValidationException("Not validation data: " + userDto);
     }
 

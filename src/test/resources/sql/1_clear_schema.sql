@@ -1,0 +1,4 @@
+DELETE
+FROM person;
+DELETE
+FROM book;

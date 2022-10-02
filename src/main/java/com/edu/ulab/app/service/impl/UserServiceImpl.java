@@ -40,13 +40,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         if (UserValidator.isValidUser(userDto)){
             User user = userMapper.userDtoToUser(userDto);
             log.info("Mapped user: {}", user);
 
             User savedUser = userRepository.save(user);
             log.info("Update user: {}", savedUser);
+
+            return userMapper.userToUserDto(savedUser);
         } else throw new ValidationException("Not validation data: " + userDto);
     }
 
@@ -54,20 +56,16 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
 
-        if (userOpt.isPresent()) {
-            log.info("Find user: {}", userOpt.get());
-            return userMapper.userToUserDto(userOpt.get());
-        } else throw new NotFoundException("User with ID: " + id + " not found");
+        return userOpt.map(userMapper::userToUserDto)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + id + " not found"));
     }
 
     @Override
     public UserDto getUserByFullName(UserDto userDto) {
         Optional<User> userOpt = userRepository.findByFullName(userDto.getFullName());
 
-        if (userOpt.isPresent()) {
-            log.info("Find user: {}", userOpt.get());
-            return userMapper.userToUserDto(userOpt.get());
-        } else throw new NotFoundException("User not found");
+        return userOpt.map(userMapper::userToUserDto)
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override

@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -48,13 +50,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(BookDto bookDto) {
+    public BookDto updateBook(BookDto bookDto) {
         if (BookValidator.isValidBook(bookDto)){
             Book book = bookMapper.bookDtoToBook(bookDto);
             log.info("Mapped book: {}", book);
 
             Book savedBook = bookRepository.save(book);
             log.info("Saved book: {}", savedBook);
+
+            return bookMapper.bookToBookDto(savedBook);
         } else throw new ValidationException("Not validation data: " + bookDto);
     }
 
@@ -62,19 +66,17 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookById(Long id) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
-        if (bookOpt.isPresent()) {
-            log.info("Got book: {}", bookOpt.get());
-            return bookMapper.bookToBookDto(bookOpt.get());
-        } else throw new NotFoundException("Book with ID: " + id + " not found");
+        return bookOpt.map(bookMapper::bookToBookDto)
+                .orElseThrow(() -> new NotFoundException("Book with ID: " + id + " not found"));
     }
 
     @Override
-    public List<Book> getBooksByUserId(Long userId) {
+    public List<BookDto> getBooksByUserId(Long userId) {
         Optional<User> userOpt = userRepository.findById(userId);
 
         if (userOpt.isPresent()) {
             log.info("Got user: {}", userOpt.get());
-            return userOpt.get().getBookList();
+            return userOpt.get().getBookList().stream().map(bookMapper::bookToBookDto).toList();
         } else throw new NotFoundException("User with ID: " + userId + " not found");
     }
 
@@ -89,8 +91,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBook(Book book) {
-        log.info("Book for remove: {}", book);
-        bookRepository.delete(book);
+    public void deleteBook(BookDto bookDto) {
+        log.info("Book for remove: {}", bookDto);
+        bookRepository.delete(bookMapper.bookDtoToBook(bookDto));
+    }
+
+    @Override
+    public List<BookDto> getAllBooks() {
+        return StreamSupport.stream(bookRepository.findAll().spliterator(),false)
+                .filter(Objects::nonNull)
+                .map(bookMapper::bookToBookDto)
+                .toList();
     }
 }

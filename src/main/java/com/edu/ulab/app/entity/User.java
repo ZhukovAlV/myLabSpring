@@ -17,7 +17,10 @@ import java.util.List;
 @Table(name = "person")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
+    @SequenceGenerator(name = "sequence",
+            sequenceName = "sequence",
+            initialValue = 1, allocationSize = 20)
     private Long id;
 
     private String fullName;
