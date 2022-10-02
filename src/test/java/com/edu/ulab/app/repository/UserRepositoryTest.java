@@ -8,14 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 /**
  * Тесты репозитория {@link UserRepository}.
@@ -154,4 +157,18 @@ public class UserRepositoryTest {
     }
 
     // * failed
+
+    @DisplayName("Получить юзера с id, который равен null")
+    @Test
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    @Rollback
+    @Sql({"classpath:sql/1_clear_schema.sql",
+            "classpath:sql/2_insert_person_data.sql",
+            "classpath:sql/3_insert_book_data.sql"
+    })
+    void getPersonWithIdThanDoesntExist(){
+
+        // when
+        catchThrowable(() -> userRepository.findById(null));
+    }
 }

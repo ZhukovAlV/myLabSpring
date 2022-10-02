@@ -10,12 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 /**
  * Тесты репозитория {@link BookRepository}.
@@ -172,4 +174,16 @@ public class BookRepositoryTest {
 
     // * failed
     // example failed test
+    @DisplayName("Получить книгу с id null. Должно выбросить ошибку.")
+    @Test
+    @ExceptionHandler(IllegalArgumentException.class)
+    @Rollback
+    @Sql({"classpath:sql/1_clear_schema.sql",
+            "classpath:sql/2_insert_person_data.sql",
+            "classpath:sql/3_insert_book_data.sql"
+    })
+    void getBookByIdNull() {
+        // when
+        catchThrowable(() -> bookRepository.findById(null));
+    }
 }
