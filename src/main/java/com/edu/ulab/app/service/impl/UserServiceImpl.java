@@ -56,20 +56,16 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
 
-        if (userOpt.isPresent()) {
-            log.info("Find user: {}", userOpt.get());
-            return userMapper.userToUserDto(userOpt.get());
-        } else throw new NotFoundException("User with ID: " + id + " not found");
+        return userOpt.map(userMapper::userToUserDto)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + id + " not found"));
     }
 
     @Override
     public UserDto getUserByFullName(UserDto userDto) {
         Optional<User> userOpt = userRepository.findByFullName(userDto.getFullName());
 
-        if (userOpt.isPresent()) {
-            log.info("Find user: {}", userOpt.get());
-            return userMapper.userToUserDto(userOpt.get());
-        } else throw new NotFoundException("User not found");
+        return userOpt.map(userMapper::userToUserDto)
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override

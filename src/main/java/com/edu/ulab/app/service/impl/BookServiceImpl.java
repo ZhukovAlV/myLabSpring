@@ -66,10 +66,8 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookById(Long id) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
-        if (bookOpt.isPresent()) {
-            log.info("Got book: {}", bookOpt.get());
-            return bookMapper.bookToBookDto(bookOpt.get());
-        } else throw new NotFoundException("Book with ID: " + id + " not found");
+        return bookOpt.map(bookMapper::bookToBookDto)
+                .orElseThrow(() -> new NotFoundException("Book with ID: " + id + " not found"));
     }
 
     @Override
