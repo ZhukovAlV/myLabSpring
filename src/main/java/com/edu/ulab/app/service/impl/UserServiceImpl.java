@@ -40,13 +40,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         if (UserValidator.isValidUser(userDto)){
             User user = userMapper.userDtoToUser(userDto);
             log.info("Mapped user: {}", user);
 
             User savedUser = userRepository.save(user);
             log.info("Update user: {}", savedUser);
+
+            return userDto;
         } else throw new ValidationException("Not validation data: " + userDto);
     }
 

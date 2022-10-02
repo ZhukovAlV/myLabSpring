@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public interface UserService {
     UserDto createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto);
+    UserDto updateUser(UserDto userDto);
 
     UserDto getUserById(Long id);
 
