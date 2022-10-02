@@ -18,4 +18,6 @@ public interface BookService {
     void deleteBookById(Long id);
 
     void deleteBook(Book book);
+
+/*    List<BookDto> getBooks();*/
 }

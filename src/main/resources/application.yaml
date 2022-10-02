@@ -13,7 +13,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL81Dialect
   datasource:
-    url: jdbc:postgresql://${PSQL_DATASOURCE_URL:localhost:5432/mpl_ulab_db}
+    url: jdbc:postgresql://${PSQL_DATASOURCE_URL:localhost:5433/mpl_ulab_db}
     username: ${PSQL_DATASOURCE_USERNAME:test}
     password: ${PSQL_DATASOURCE_PASSWORD:test}
   mvc:

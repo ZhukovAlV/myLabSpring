@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -93,4 +94,12 @@ public class BookServiceImpl implements BookService {
         log.info("Book for remove: {}", book);
         bookRepository.delete(book);
     }
+
+/*    @Override
+    public List<BookDto> getBooks() {
+        return bookRepository.findAll().stream()
+                .filter(Objects::nonNull)
+                .map(bookMapper::bookToBookDto)
+                .toList();
+    }*/
 }
