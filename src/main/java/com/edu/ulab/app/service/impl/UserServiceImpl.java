@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
             User savedUser = userRepository.save(user);
             log.info("Update user: {}", savedUser);
 
-            return userDto;
+            return userMapper.userToUserDto(savedUser);
         } else throw new ValidationException("Not validation data: " + userDto);
     }
 

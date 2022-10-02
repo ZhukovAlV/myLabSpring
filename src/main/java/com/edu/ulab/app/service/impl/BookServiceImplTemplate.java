@@ -61,13 +61,15 @@ public class BookServiceImplTemplate implements BookService {
     }
 
     @Override
-    public void updateBook(BookDto bookDto) {
+    public BookDto updateBook(BookDto bookDto) {
         if (BookValidator.isValidBook(bookDto)){
             Book book = bookMapper.bookDtoToBook(bookDto);
             log.info("Book to update: {}", book);
 
             jdbcTemplate.update("UPDATE BOOK SET USER_ID=?, TITLE=?, AUTHOR=?, PAGE_COUNT=? WHERE ID=?",
                     book.getUserId(), book.getTitle(), book.getAuthor(), book.getPageCount(), book.getId());
+
+            return bookDto;
         } else throw new ValidationException("Not validation data: " + bookDto);
     }
 
@@ -87,12 +89,12 @@ public class BookServiceImplTemplate implements BookService {
     }
 
     @Override
-    public List<Book> getBooksByUserId(Long userId) {
+    public List<BookDto> getBooksByUserId(Long userId) {
         List<Book> books = jdbcTemplate.query("SELECT * FROM BOOK WHERE USER_ID = ?",
                 new BeanPropertyRowMapper<>(Book.class), new Object[]{userId});
         log.info("Found books: {}", books);
 
-        return books;
+        return books.stream().map(bookMapper::bookToBookDto).toList();
     }
 
     @Override
@@ -102,7 +104,16 @@ public class BookServiceImplTemplate implements BookService {
     }
 
     @Override
-    public void deleteBook(Book book) {
-        deleteBookById(book.getId());
+    public void deleteBook(BookDto bookDto) {
+        deleteBookById(bookDto.getId());
+    }
+
+    @Override
+    public List<BookDto> getAllBooks() {
+        List<Book> books = jdbcTemplate.query("SELECT * FROM BOOK",
+                new BeanPropertyRowMapper<>(Book.class));
+        log.info("Found books: {}", books);
+
+        return books.stream().map(bookMapper::bookToBookDto).toList();
     }
 }
